@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import userRouter from './router/userRouter.js';
+import adminRouter from './router/adminRouter.js'
 import connectDB from './db/connection.js';
 
 dotenv.config();
@@ -15,6 +16,8 @@ app.use(cors());
 
 //USER-ROUTE
 app.use('/user', userRouter);
+//ADMIN-ROUTE
+app.use('/admin', adminRouter);
 
 //DATABASE--CONNECTION
 connectDB();
