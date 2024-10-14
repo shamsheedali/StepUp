@@ -25,13 +25,20 @@ const AdminLogin = () => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(validate()){
-      adminlogin(formData)
-      navigate('/dashboard');
+    
+    if (validate()) { 
+      const loginSuccess = await adminlogin(formData);
+  
+      if (loginSuccess) {
+        navigate('/dashboard'); 
+      } else {
+        setErrors({ general: "Invalid login credentials" }); 
+      }
     }
-  }
+  };
+  
 
   return (
     <div className="bg-[#1a3120] w-full h-screen flex items-center justify-center">
@@ -83,14 +90,13 @@ const AdminLogin = () => {
               </label>
               <div className="text-red-600">{errors.password}</div>
             </div>
-
+            {errors.general && <div className="text-red-600 mt-2">{errors.general}</div>}
             <button
               type="submit"
               className="btn w-60 text-white mx-auto bg-black"
             >
               Log In
             </button>
-            {/* {error && <div className="text-red-600">{error}</div>} */}
           </form>
 
           {/* LINE */}

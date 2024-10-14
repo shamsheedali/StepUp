@@ -6,6 +6,7 @@ import Login from "./pages/user/login/Login";
 import AdminLogin from "./pages/admin/adminlogin/AdminLogin";
 import { Provider } from "react-redux";
 import { store } from "./app/Store";
+import Homepage from "./pages/user/homepage/Homepage";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           {/* USER--ROUTES */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/homepage" element={<Homepage />} />
 
           {/* ADMIN--ROUTES */}
           <Route path="/dashboard/*" element={<Dashboard />} />

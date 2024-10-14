@@ -1,22 +1,46 @@
 import React, { useState } from "react";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import SignupImg from '../../../assets/images/auth/nike.png';
-import { useDispatch, useSelector } from 'react-redux';
-import { signupUser } from '../../../features/users/UserSlice';  // Import the signup action
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../features/users/UserSlice';
+import { Link, useNavigate } from "react-router-dom";
+import { signUp } from "../../../api/users";
 
 const Signup = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   // Validation logic
   const validate = () => {
     let tempErrors = {};
-    if (!formData.username) tempErrors.username = "Username is required";
-    if (!formData.email) tempErrors.email = "Email is required";
-    if (!formData.password) tempErrors.password = "Password is required";
-    else if (formData.password.length < 6) tempErrors.password = "Password must be at least 6 characters";
+
+    // Username validation
+    if (!formData.username) {
+      tempErrors.username = "Username is required";
+    } else if (/^[0-9]/.test(formData.username)) {
+      tempErrors.username = "Username cannot start with a number";
+    } else if (/^\s/.test(formData.username)) {
+      tempErrors.username = "Username cannot start with a space";
+    } else if (formData.username.length < 4) {
+      tempErrors.username = "Username must be at least 4 characters";
+    }
+
+    // Email validation
+    if (!formData.email) {
+      tempErrors.email = "Email is required";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      tempErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      tempErrors.password = "Password must be at least 6 characters";
+    }
+
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -26,10 +50,19 @@ const Signup = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      dispatch(signupUser(formData));  // Dispatch the Redux signup action
+      setLoading(true); 
+      try {
+        await signUp(formData);  // Call the signup API
+        dispatch(setUser(formData)); // Dispatch the Redux action if signup is successful
+        navigate('/homepage');  // Redirect to the homepage
+      } catch (error) {
+        console.error("Signup failed:", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -44,7 +77,7 @@ const Signup = () => {
           <div>
             <h1 className="text-3xl font-bold font-clash-grotesk">Get Started</h1>
             <h3 className="text-sm text-[#201f1fde] font-semibold">
-              Already have account? <a href="">Log In</a>
+              Already have an account? <Link to={'/login'}>Log In</Link>
             </h3>
           </div>
 
@@ -101,15 +134,14 @@ const Signup = () => {
               <div className="text-red-600">{errors.password}</div>
             </div>
 
-            {/* Sign--up button */}
+            {/* Sign-up button */}
             <button
               type="submit"
-              className="btn w-60 text-white mx-auto bg-black"
-              disabled={loading}
+              className={`btn w-60 text-white mx-auto bg-black ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading} // Disable button when loading
             >
-              {loading ? "Signing up..." : "Sign Up"}
+              {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
-            {error && <div className="text-red-600">{error}</div>}
           </form>
 
           {/* Divider and social icons */}

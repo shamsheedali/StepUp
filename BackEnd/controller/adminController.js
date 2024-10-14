@@ -1,5 +1,5 @@
 import admins from "../modal/adminModal.js";
-import users from '../modal/userModal.js'
+import users from "../modal/userModal.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -34,15 +34,54 @@ const login = async (req, res) => {
   }
 };
 
-
 //GET--USERS
 const fetchUsers = async (req, res) => {
   try {
     const allUsers = await users.find();
-    res.json(allUsers)
+    res.json(allUsers);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching users", error })
+    res.status(500).json({ message: "Error fetching users", error });
   }
-}
+};
 
-export {login, fetchUsers};
+//BLOCK--USER
+const blockUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedUser = await users.findByIdAndUpdate(
+      userId,
+      { status: "blocked" },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//UNBLOCK--USER
+const unBlockUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedUser = await users.findByIdAndUpdate(
+      userId,
+      { status: "active" }, // Update the status to 'active'
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { login, fetchUsers, blockUser, unBlockUser };
