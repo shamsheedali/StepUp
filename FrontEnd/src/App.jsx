@@ -7,16 +7,20 @@ import AdminLogin from "./pages/admin/adminlogin/AdminLogin";
 import { Provider } from "react-redux";
 import { store } from "./app/Store";
 import Homepage from "./pages/user/homepage/Homepage";
+import AllProduct from "./pages/user/all_product/AllProduct";
+import SingleProductPage from "./pages/user/single_productpage/SingleProductPage";
 
 const App = () => {
   return (
-    <div>
+    <div className="bg-white">
       <Provider store={store}>
         <Routes>
           {/* USER--ROUTES */}
+          <Route path="/" element={<Homepage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/homepage" element={<Homepage />} />
+          <Route path="/products" element={<AllProduct />} />
+          <Route path="/product" element={<SingleProductPage />} />
 
           {/* ADMIN--ROUTES */}
           <Route path="/dashboard/*" element={<Dashboard />} />
